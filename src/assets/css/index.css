@@ -1,5 +1,11 @@
 html {
-  font-size: 62.5%;
+  font-size: 100%;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
 }
 
 html body #root .App {

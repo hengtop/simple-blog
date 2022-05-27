@@ -1,12 +1,16 @@
 import React, { memo, useState } from "react";
 import { localStore } from "utils";
+import { useAuth } from "context/auth";
 
-import Card from "@mui/material/Card";
 import Box from "@mui/material/Box";
+import Link from "@mui/material/Link";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import TextField from "@mui/material/TextField";
-import { FullWidthButton, Title } from "./style";
+import Avatar from "@mui/material/Avatar";
+import { pink } from "@mui/material/colors";
+import VpnKeySharpIcon from "@mui/icons-material/VpnKeySharp";
+import { FullWidthButton, Title, CustomCard } from "./style";
 
 interface LoginParamsType {
   username: string;
@@ -18,7 +22,9 @@ type LoginParamsChangeType = "username" | "password";
 export default memo(function Index() {
   //props/state
   const [loading, setLoading] = useState(false);
-  const [keepLoginParams, setKeepLoginParams] = useState(false);
+  const [keepLoginParams, setKeepLoginParams] = useState(
+    localStore.getCacheStore("keepLoginParams") ?? false,
+  );
   const [loginParams, setLoginParams] = useState<LoginParamsType>({
     username: localStore.getCacheStore("username") ?? "",
     password: localStore.getCacheStore("password") ?? "",
@@ -27,6 +33,7 @@ export default memo(function Index() {
   //redux hooks
 
   //other hooks
+  const { login } = useAuth();
 
   //其他逻辑
   const handleChange = (
@@ -38,8 +45,9 @@ export default memo(function Index() {
       [type]: e.target.value,
     });
   };
-  const handleSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
     // 保存密码
     if (keepLoginParams) {
       localStore.setCacheStore("username", loginParams.username);
@@ -50,16 +58,24 @@ export default memo(function Index() {
       localStore.removeCacheStore("username");
       localStore.removeCacheStore("password");
     }
+    await login(loginParams);
+    setLoading(false);
+  };
 
-    console.log(loginParams);
+  const handleChangeKeepLoginParams = () => {
+    console.log(keepLoginParams);
+    setKeepLoginParams(!keepLoginParams);
+    localStore.setCacheStore("keepLoginParams", !keepLoginParams);
   };
 
   return (
-    <Card
-      variant="outlined"
-      sx={{ width: "20rem", height: "25rem", padding: "3.2rem 4rem" }}
-    >
-      <Title>请登录</Title>
+    <CustomCard variant="outlined">
+      <Title>
+        <Avatar sx={{ bgcolor: pink[500], marginBottom: "1rem" }}>
+          <VpnKeySharpIcon />
+        </Avatar>
+        请登录
+      </Title>
       <Box component="form" autoComplete="off" onSubmit={handleSubmit}>
         <TextField
           value={loginParams.username}
@@ -89,7 +105,7 @@ export default memo(function Index() {
           control={
             <Checkbox
               checked={keepLoginParams}
-              onChange={() => setKeepLoginParams(!keepLoginParams)}
+              onChange={handleChangeKeepLoginParams}
               inputProps={{ "aria-label": "controlled" }}
             />
           }
@@ -98,7 +114,8 @@ export default memo(function Index() {
         <FullWidthButton type="submit" loading={loading} variant="contained">
           登录
         </FullWidthButton>
+        <Link href="#">忘记密码?</Link>
       </Box>
-    </Card>
+    </CustomCard>
   );
 });

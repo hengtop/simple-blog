@@ -16,5 +16,17 @@ module.exports = (req, res, next) => {
       return res.status(400).json(responseFormat(-1, "失败"));
     }
   }
+
+  if (req.path === "/me") {
+    if (req.headers.authorization) {
+      return res.status(200).json(
+        responseFormat(200, "成功", {
+          token: "ejsadk;alskdl;211",
+        }),
+      );
+    } else {
+      return res.status(400).json(responseFormat(-1, "失败"));
+    }
+  }
   next();
 };

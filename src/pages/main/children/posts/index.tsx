@@ -9,5 +9,5 @@ export default memo(function index() {
 
   //其他逻辑
 
-  return <div>文章分类</div>;
+  return <div>文章列表</div>;
 });

@@ -1,6 +1,5 @@
 import React, { memo } from "react";
-import LoginScreen from "./login";
-import { LoginContainer } from "./style";
+import { useAuth } from "context/auth";
 
 export default memo(function Index() {
   //props/state
@@ -8,12 +7,14 @@ export default memo(function Index() {
   //redux hooks
 
   //other hooks
+  const { logout } = useAuth();
 
   //其他逻辑
 
   return (
-    <LoginContainer>
-      <LoginScreen />
-    </LoginContainer>
+    <div>
+      内容区
+      <button onClick={logout}>退出</button>
+    </div>
   );
 });

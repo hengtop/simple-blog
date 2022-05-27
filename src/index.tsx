@@ -3,15 +3,22 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import { AppProviders } from "context";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "assets/css/index.css";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement,
 );
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <AppProviders>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+      <ToastContainer limit={3} />
+    </AppProviders>
   </React.StrictMode>,
 );
 
