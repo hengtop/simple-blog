@@ -5,6 +5,7 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { AppProviders } from "context";
 import { ToastContainer } from "react-toastify";
+import "normalize.css";
 import "react-toastify/dist/ReactToastify.css";
 import "assets/css/index.css";
 

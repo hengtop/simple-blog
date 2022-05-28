@@ -44,3 +44,5 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+该项目使用 mui 的一个坑就是 黑暗模式切换需要将切换模式的组件放置在由颜色变量样式的容器中否者不会应用全局的模式切换效果，目前测试 SURFACES 下的容器中的元素时可以应用到的。

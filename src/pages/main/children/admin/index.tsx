@@ -12,7 +12,7 @@ export default memo(function Index() {
 
   //other hooks
   const { user } = useAuth();
-
+  console.log(user);
   //其他逻辑
 
   return (

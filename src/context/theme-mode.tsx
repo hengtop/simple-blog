@@ -6,16 +6,13 @@ const ColorModeContext = createContext({ toggleColorMode: () => {} });
 ColorModeContext.displayName = "ColorModeContext";
 
 export const ToggleColorMode = ({ children }: { children: ReactNode }) => {
-  console.log(children);
   const [mode, setMode] = useState<"light" | "dark">("light");
   const colorMode = useMemo(
     () => ({
       toggleColorMode: () => {
         setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
       },
-      user: { age: 121212 },
     }),
-
     [],
   );
 
@@ -24,7 +21,7 @@ export const ToggleColorMode = ({ children }: { children: ReactNode }) => {
       createTheme({
         palette: {
           primary: {
-            main: "#ccf",
+            main: "#8ACADA",
           },
           mode,
         },

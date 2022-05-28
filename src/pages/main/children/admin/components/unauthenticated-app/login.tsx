@@ -3,7 +3,6 @@ import { localStore } from "utils";
 import { useAuth } from "context/auth";
 
 import Box from "@mui/material/Box";
-import Link from "@mui/material/Link";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import TextField from "@mui/material/TextField";
@@ -114,7 +113,6 @@ export default memo(function Index() {
         <FullWidthButton type="submit" loading={loading} variant="contained">
           登录
         </FullWidthButton>
-        <Link href="#">忘记密码?</Link>
       </Box>
     </CustomCard>
   );
