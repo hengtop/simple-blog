@@ -4,10 +4,13 @@ import { useAuth } from "context/auth";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
+type RequestMethodType = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTION";
+
 interface CustomRequestInit extends RequestInit {
   params?: object;
   data?: object;
   token?: string;
+  method?: RequestMethodType;
 }
 
 export interface ResponseType {
@@ -18,7 +21,7 @@ export interface ResponseType {
 
 export const http = async (
   url: string,
-  { data, token, headers, ...customConfig }: CustomRequestInit = {},
+  { data, params, token, headers, ...customConfig }: CustomRequestInit = {},
 ) => {
   const config = {
     method: "GET",
@@ -28,11 +31,11 @@ export const http = async (
     },
     ...customConfig,
   };
-  if (config.params) {
-    url += `?${qs.stringify(config.params)}`;
+  if (params) {
+    url += `?${qs.stringify(params)}`;
   }
-  if (config.body) {
-    config.body = JSON.stringify(config.body);
+  if (data) {
+    config.body = JSON.stringify(data);
   }
   return fetch(`${apiUrl}${url}`, config).then(async (response) => {
     if (response.status === 401) {

@@ -18,7 +18,6 @@ export const HeaderContainer = styled(AppBar)`
   height: 4rem;
   box-sizing: border-box;
   padding: 0 2.5rem;
-  background-color: #fff;
   box-shadow: none;
 `;
 

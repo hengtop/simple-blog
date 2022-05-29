@@ -62,7 +62,6 @@ export default memo(function Index() {
   };
 
   const handleChangeKeepLoginParams = () => {
-    console.log(keepLoginParams);
     setKeepLoginParams(!keepLoginParams);
     localStore.setCacheStore("keepLoginParams", !keepLoginParams);
   };

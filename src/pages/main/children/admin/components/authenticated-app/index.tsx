@@ -1,5 +1,7 @@
-import React, { memo, useState } from "react";
+import React, { memo, useEffect, useMemo, useState } from "react";
+import { useSearchParams, useLocation } from "react-router-dom";
 import { useAuth } from "context/auth";
+import * as qs from "qs";
 
 import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
@@ -10,20 +12,35 @@ import ArticleList from "./components/article-list";
 import Edit from "./components/edit";
 import ClassifyList from "./components/classify-list";
 import Setting from "./components/setting";
-import Typography from "@mui/material/Typography";
 
 export default memo(function Index() {
   //props/state
-  const [value, setValue] = useState("1");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [value, setValue] = useState(searchParams.get("nav") ?? "1");
 
   //redux hooks
 
   //other hooks
   const { logout } = useAuth();
+  const location = useLocation();
+  const queryObj = useMemo(
+    () => qs.parse(location.search.slice(1)) as any,
+    [location],
+  );
+  useEffect(() => {
+    setValue(queryObj.nav ?? "1");
+  }, [queryObj]);
 
   //其他逻辑
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    if (newValue !== "1") {
+      delete queryObj.articleId;
+    }
+    setSearchParams({
+      ...(queryObj as {}),
+      nav: newValue,
+    });
     setValue(newValue);
   };
 

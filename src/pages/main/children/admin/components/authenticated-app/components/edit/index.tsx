@@ -1,6 +1,17 @@
-import React, { memo, useState, useCallback, useRef, ChangeEvent } from "react";
+import React, {
+  memo,
+  useState,
+  useCallback,
+  useRef,
+  ChangeEvent,
+  useEffect,
+} from "react";
+import { useSearchParams } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
 import { useMount } from "hooks";
+import { service } from "network";
+import { awaitHandle, timeFormat } from "utils";
+import { toast } from "react-toastify";
 import zhCN from "date-fns/locale/zh-CN";
 
 import {
@@ -21,16 +32,43 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import LoadingButton from "@mui/lab/LoadingButton";
 
+interface CategoryType {
+  id: number;
+  name: string;
+  slug: string;
+  description: string;
+}
+
+interface ArticleParamsType {
+  id?: number;
+  title: string;
+  context: string;
+  publishTime?: string;
+  type: number;
+  categoryIds: number[];
+}
+
 export default memo(function Index() {
   //props/state
   const vditorRef = useRef<HTMLDivElement>(null);
   const [vd, setVd] = useState<Vditor>();
-  const [publishDate, setPublishDate] = useState<Date | null>(null);
+  const [publishTime, setPublishTime] = useState<Date | null>(null);
   const [title, setTitle] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const [articleType, setArticleType] = useState(1);
+  const [categoryList, setCategoryList] = useState<Array<CategoryType>>([]);
+  const [articleParams, setArticleParams] = useState<ArticleParamsType>();
+  const [checkedCategoryList, setCheckedCategoryList] = useState<Array<number>>(
+    [],
+  );
+  const [defaultCheckedCategoryList, setDefaultCheckedCategoryList] = useState<
+    Array<number>
+  >([]);
   //redux hooks
 
   //other hooks
+  const [searchParams] = useSearchParams();
+  const client = service.useHttp();
   const theme = useTheme();
   useMount(
     useCallback(() => {
@@ -51,39 +89,97 @@ export default memo(function Index() {
             index: 9999,
           },
           after: () => {
-            vditor.setValue("");
             setVd(vditor);
           },
         });
       }
+      getCategoryList();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [vditorRef, theme.palette.mode]),
   );
 
+  useEffect(() => {
+    if (searchParams.get("articleId")) {
+      getArticleInfo();
+    } else {
+      vd && vd.setValue && vd.setValue("");
+    }
+  }, [vd, searchParams]);
+  console.log(articleParams);
   //其他逻辑
-  const classList = ["默认分类", "javascript", "前端"];
+  // 获取分类
+  const getCategoryList = useCallback(async () => {
+    const res = await client("/categoryList");
+    setCategoryList(res);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  // 获取文章信息
+  const getArticleInfo = useCallback(async () => {
+    const res: ArticleParamsType = await client(
+      `/articleList/${searchParams.get("articleId")}`,
+    );
+    setArticleParams(res);
+    vd?.setValue(res.context);
+    setDefaultCheckedCategoryList(res.categoryIds);
+    setCheckedCategoryList(res.categoryIds);
+  }, [searchParams, vd]);
+
   const handleChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
-    setTitle(e.target.value);
+    setArticleParams({
+      ...(articleParams as ArticleParamsType),
+      title: e.target.value,
+    });
+  };
+  const handleChangeCategoryCheckBox = (id: number) => {
+    let newList = [...checkedCategoryList];
+    if (newList.includes(id)) {
+      setArticleParams({
+        ...(articleParams as ArticleParamsType),
+        categoryIds: newList.filter((item) => item !== id),
+      });
+      setCheckedCategoryList(newList.filter((item) => item !== id));
+    } else {
+      newList.push(id);
+      setArticleParams({
+        ...(articleParams as ArticleParamsType),
+        categoryIds: newList,
+      });
+      setCheckedCategoryList(newList);
+    }
   };
 
   // 提交文章
-  const handleSubmit = () => {
-    console.log(111);
-    console.log({
-      title,
-      publishDate,
-      context: vd?.getValue(),
-    });
+  const handleSubmit = async () => {
+    setLoading(true);
+    const [, err] = await awaitHandle(
+      client("/articleList", {
+        method: "POST",
+        data: {
+          ...articleParams,
+          context: vd?.getValue(),
+          type: articleType,
+        },
+      }),
+    );
+    if (!err) {
+      toast.success("文章发布成功", {
+        hideProgressBar: true,
+        autoClose: 1000,
+        position: "top-center",
+      });
+    }
+    setLoading(false);
   };
-
   return (
     <EditContainer>
       <EditWrapper>
         <TextField
+          required
           fullWidth
           margin="normal"
           label="文章标题"
           size="small"
-          value={title}
+          value={articleParams?.title ?? ""}
           onChange={handleChangeTitle}
         />
         <div ref={vditorRef}></div>
@@ -93,12 +189,17 @@ export default memo(function Index() {
         <ContentItemContainer>
           <LocalizationProvider dateAdapter={AdapterDateFns} locale={zhCN}>
             <DateTimePicker
-              inputFormat="yyyy-MM-dd hh:mm a"
+              ampm={false}
+              inputFormat="yyyy-MM-dd HH:mm"
               renderInput={(props) => <TextField {...props} />}
               label="选择文章发布日期"
-              value={publishDate}
+              value={articleParams?.publishTime ?? null}
               onChange={(newValue: any) => {
-                setPublishDate(newValue);
+                setPublishTime(newValue);
+                setArticleParams({
+                  ...(articleParams as ArticleParamsType),
+                  publishTime: timeFormat(newValue),
+                });
               }}
             />
           </LocalizationProvider>
@@ -106,11 +207,19 @@ export default memo(function Index() {
         <Typography variant="h6">分类</Typography>
         <ContentItemContainer>
           <FormGroup>
-            {classList.map((item, index) => (
+            {categoryList.map((item, index) => (
               <FormControlLabel
-                key={index}
-                control={<Checkbox defaultChecked={index === 0} />}
-                label={item}
+                key={item.id}
+                control={
+                  <Checkbox
+                    defaultChecked={defaultCheckedCategoryList.includes(
+                      item.id,
+                    )}
+                    checked={checkedCategoryList.includes(item.id)}
+                    onChange={() => handleChangeCategoryCheckBox(item.id)}
+                  />
+                }
+                label={item.name}
               />
             ))}
           </FormGroup>
