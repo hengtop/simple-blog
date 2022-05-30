@@ -52,11 +52,15 @@ export default memo(function Index() {
   const client = service.useHttp();
   useMount(
     useCallback(async () => {
-      const res = await client("/categoryList");
-      setDataList(res);
+      getCategoryList();
     }, []),
   );
   //其他逻辑
+  // 获取分类数据
+  const getCategoryList = useCallback(async () => {
+    const res = await client("/categoryList");
+    setDataList(res);
+  }, []);
   // 弹窗开/关
   const handleOpen = useCallback(() => setOpen(true), []);
   const handleClose = useCallback(() => {

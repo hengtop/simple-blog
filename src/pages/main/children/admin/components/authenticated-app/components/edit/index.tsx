@@ -68,6 +68,7 @@ export default memo(function Index() {
 
   //other hooks
   const [searchParams] = useSearchParams();
+  const id = searchParams.get("articleId") ?? "";
   const client = service.useHttp();
   const theme = useTheme();
   useMount(
@@ -100,13 +101,14 @@ export default memo(function Index() {
 
   useEffect(() => {
     if (searchParams.get("articleId")) {
-      getArticleInfo();
+      getArticleInfo(id);
     } else {
       vd && vd.setValue && vd.setValue("");
     }
-  }, [vd, searchParams]);
+  }, [vd, searchParams, id]);
   console.log(articleParams);
   //其他逻辑
+
   // 获取分类
   const getCategoryList = useCallback(async () => {
     const res = await client("/categoryList");
@@ -114,15 +116,16 @@ export default memo(function Index() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   // 获取文章信息
-  const getArticleInfo = useCallback(async () => {
-    const res: ArticleParamsType = await client(
-      `/articleList/${searchParams.get("articleId")}`,
-    );
-    setArticleParams(res);
-    vd?.setValue(res.context);
-    setDefaultCheckedCategoryList(res.categoryIds);
-    setCheckedCategoryList(res.categoryIds);
-  }, [searchParams, vd]);
+  const getArticleInfo = useCallback(
+    async (id: number | string) => {
+      const res: ArticleParamsType = await client(`/articleList/${id}`);
+      setArticleParams(res);
+      vd?.setValue(res.context);
+      setDefaultCheckedCategoryList(res.categoryIds);
+      setCheckedCategoryList(res.categoryIds);
+    },
+    [searchParams, vd],
+  );
 
   const handleChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
     setArticleParams({

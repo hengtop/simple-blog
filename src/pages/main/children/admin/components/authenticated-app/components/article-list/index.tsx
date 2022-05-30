@@ -22,11 +22,17 @@ export default memo(function Index() {
   const client = service.useHttp();
   useMount(
     useCallback(async () => {
-      const res = await client("/articleList");
-      setDataList(res);
+      getArticleList();
     }, []),
   );
   //其他逻辑
+
+  // 获取表格内容
+  const getArticleList = useCallback(async () => {
+    const res = await client("/articleList");
+    setDataList(res);
+  }, []);
+
   const handleSelectionModelChange = useCallback((ids: number[]) => {
     setSelectTableList(ids);
   }, []);
