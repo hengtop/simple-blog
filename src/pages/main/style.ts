@@ -7,6 +7,8 @@ export const MainContainer = styled.div(
     height: "100vh",
     backgroundColor: background.default,
     overflow: "auto",
+    backgroundImage:
+      "linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05))",
   }),
 );
 
@@ -19,6 +21,10 @@ export const HeaderContainer = styled(AppBar)`
   box-sizing: border-box;
   padding: 0 2.5rem;
   box-shadow: none;
+  background-image: linear-gradient(
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0.05)
+  );
 `;
 
 export const OutletContainer = styled.main`

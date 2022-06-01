@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
 import { useThemeMode } from "context/theme-mode";
 
@@ -20,6 +20,7 @@ export default memo(function Index() {
   //redux hooks
 
   //other hooks
+  const navigate = useNavigate();
   const theme = useTheme();
   const colorMode = useThemeMode();
   //其他逻辑
@@ -27,7 +28,7 @@ export default memo(function Index() {
   return (
     <MainContainer background={theme.palette.background}>
       <HeaderContainer position="fixed">
-        <HeaderLeft>你好</HeaderLeft>
+        <HeaderLeft onClick={() => navigate("/")}>主页</HeaderLeft>
         <HeaderRight>
           <IconButton
             sx={{ ml: 1 }}

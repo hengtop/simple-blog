@@ -9,6 +9,7 @@ import React, {
 import { columns } from "./config";
 import { service } from "network";
 import { useMount } from "hooks";
+import { awaitHandle } from "utils";
 
 import {
   FormContainer,
@@ -91,17 +92,36 @@ export default memo(function Index() {
   };
 
   // 分类提交
-  const handleSubmitCategory = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmitCategory = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     if (categoryParams?.id) {
       //编辑
       console.log("编辑", categoryParams);
+      const [, err] = await awaitHandle(
+        client(`/categoryList/${categoryParams?.id}`, {
+          method: "PUT",
+          data: categoryParams as CategoryParamsType,
+        }),
+      );
+      if (err) {
+        console.log(err);
+      }
     } else {
       // 新增
+      const [, err] = await awaitHandle(
+        client(`/categoryList`, {
+          method: "POST",
+          data: categoryParams as CategoryParamsType,
+        }),
+      );
+      if (err) {
+        console.log(err);
+      }
 
       console.log("新增", categoryParams);
     }
+    await getCategoryList();
     handleClose();
     setLoading(false);
   };

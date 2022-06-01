@@ -9,20 +9,26 @@ import Typography from "@mui/material/Typography";
 import Container from "components/container";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-import Stack from "@mui/material/Stack";
 import LoadingButton from "@mui/lab/LoadingButton";
-import Divider from "@mui/material/Divider";
+import Button from "@mui/material/Button";
+import { set } from "date-fns/esm";
 
-interface ConfigParamsType {
+interface PasswordParamsType {
   oldPassword: string;
   newPassword: string;
   rePassword: string;
+}
+
+interface OtherSettingType {
   email?: string;
+  title?: string;
 }
 
 export default memo(function Index() {
   //props/state
-  const [passwordParams, setPasswordParams] = useState<ConfigParamsType | null>(
+  const [passwordParams, setPasswordParams] =
+    useState<PasswordParamsType | null>(null);
+  const [configSetting, setConfigSetting] = useState<OtherSettingType | null>(
     null,
   );
 
@@ -37,7 +43,7 @@ export default memo(function Index() {
   const handleChangePasswordParams = useCallback(
     (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, type: string) => {
       setPasswordParams({
-        ...(passwordParams as ConfigParamsType),
+        ...(passwordParams as PasswordParamsType),
         [type]: e.target.value,
       });
       if (
@@ -53,19 +59,35 @@ export default memo(function Index() {
     [passwordParams],
   );
 
+  const handleChangeOtherSetting = useCallback(
+    (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, type: string) => {
+      setConfigSetting({
+        ...(configSetting as OtherSettingType),
+        [type]: e.target.value,
+      });
+    },
+    [configSetting],
+  );
+
   const handleSubmitPasswordParams = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (passwordParams?.newPassword !== passwordParams?.rePassword) {
+      setInputError(true);
+      return;
+    }
     setLoading(true);
+    // todo 发送请求
     console.log(passwordParams);
     setLoading(false);
   };
 
+  const handleSubmitOtherSetting = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log(configSetting);
+  };
+
   return (
     <Container>
-      <Typography marginLeft={30} variant="h6">
-        账户设置
-        <Divider />
-      </Typography>
       <Box
         component="form"
         autoComplete="off"
@@ -75,6 +97,9 @@ export default memo(function Index() {
           margin: "0 auto",
         }}
       >
+        <Typography marginLeft={"40%"} variant="h6">
+          账户设置
+        </Typography>
         <TextField
           /* 这里需要在空值的时候设置一个默认值，否则就会导致label重叠到value上 */
           value={passwordParams?.oldPassword ?? ""}
@@ -108,9 +133,25 @@ export default memo(function Index() {
           placeholder="确认密码"
           margin="normal"
         />
+        <LoadingButton type="submit" loading={loading} variant="contained">
+          更新密码
+        </LoadingButton>
+      </Box>
+      <Box
+        component="form"
+        autoComplete="off"
+        onSubmit={handleSubmitOtherSetting}
+        sx={{
+          width: "500px",
+          margin: "0 auto",
+        }}
+      >
+        <Typography marginLeft={"40%"} variant="h6">
+          其他设置
+        </Typography>
         <TextField
-          value={passwordParams?.email ?? ""}
-          onChange={(e) => handleChangePasswordParams(e, "email")}
+          value={configSetting?.email ?? ""}
+          onChange={(e) => handleChangeOtherSetting(e, "email")}
           name="email"
           type="email"
           label="邮箱"
@@ -118,11 +159,18 @@ export default memo(function Index() {
           margin="normal"
           helperText="用于消息通知之类"
         />
-        <Stack spacing={2} direction={"row"}>
-          <LoadingButton type="submit" loading={loading} variant="contained">
-            确认修改
-          </LoadingButton>
-        </Stack>
+        <TextField
+          value={configSetting?.title ?? ""}
+          onChange={(e) => handleChangeOtherSetting(e, "title")}
+          name="title"
+          type="text"
+          label="网站标题"
+          placeholder="网站标题"
+          margin="normal"
+        />
+        <Button type="submit" variant="contained">
+          保存
+        </Button>
       </Box>
     </Container>
   );

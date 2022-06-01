@@ -36,7 +36,6 @@ export default memo(function Index() {
   const handleSelectionModelChange = useCallback((ids: number[]) => {
     setSelectTableList(ids);
   }, []);
-  const handleAddArticle = useCallback(() => {}, []);
   const handleDeleteArticle = useCallback(() => {
     console.log(selectTableList);
   }, [selectTableList]);
@@ -46,7 +45,17 @@ export default memo(function Index() {
       <Container>
         <FormContainer>
           <Stack spacing={2} direction="row">
-            <Button onClick={handleAddArticle} variant="contained">
+            <Button
+              onClick={() =>
+                navigate({
+                  pathname: "/admin",
+                  search: `?${createSearchParams({
+                    nav: "1",
+                  })}`,
+                })
+              }
+              variant="contained"
+            >
               新增文章
             </Button>
             <Button

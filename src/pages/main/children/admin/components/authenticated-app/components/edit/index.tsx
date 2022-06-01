@@ -154,16 +154,32 @@ export default memo(function Index() {
   // 提交文章
   const handleSubmit = async () => {
     setLoading(true);
-    const [, err] = await awaitHandle(
-      client("/articleList", {
-        method: "POST",
-        data: {
-          ...articleParams,
-          context: vd?.getValue(),
-          type: articleType,
-        },
-      }),
-    );
+    let err = null;
+    if (id) {
+      // 编辑
+      [, err] = await awaitHandle(
+        client(`/articleList/${id}`, {
+          method: "PUT",
+          data: {
+            ...articleParams,
+            context: vd?.getValue(),
+            type: articleType,
+          },
+        }),
+      );
+    } else {
+      // 新增
+      [, err] = await awaitHandle(
+        client("/articleList", {
+          method: "POST",
+          data: {
+            ...articleParams,
+            context: vd?.getValue(),
+            type: articleType,
+          },
+        }),
+      );
+    }
     if (!err) {
       toast.success("文章发布成功", {
         hideProgressBar: true,
