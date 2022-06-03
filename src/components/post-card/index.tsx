@@ -1,16 +1,10 @@
 import React, { memo } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  TextWrapper,
-  CardContainer,
-  TitleWrapper,
-  InfoWrapper,
-  InfoItem,
-  NavTitle,
-} from "./style";
+import { CardContainer, TitleWrapper, NavTitle } from "./style";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import TextSnippetIcon from "@mui/icons-material/TextSnippet";
 import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
+import InfoNav from "components/Info-nav";
 
 interface ArticleParamsType {
   id?: number;
@@ -43,20 +37,25 @@ export default memo(function Index({
           {articleInfo.title}
         </NavTitle>
       </TitleWrapper>
-      <InfoWrapper>
-        <InfoItem>
-          <DateRangeIcon fontSize="inherit" />
-          <TextWrapper>{articleInfo.publishTime || 2022 - 11 - 11}</TextWrapper>
-        </InfoItem>
-        <InfoItem>
-          <TextSnippetIcon fontSize="inherit" />
-          <TextWrapper>{articleInfo?.count || 202022}</TextWrapper>
-        </InfoItem>
-        <InfoItem>
-          <HourglassBottomIcon fontSize="inherit" />
-          <TextWrapper> 1min</TextWrapper>
-        </InfoItem>
-      </InfoWrapper>
+      <InfoNav
+        list={[
+          {
+            icon: <DateRangeIcon fontSize="inherit" />,
+            title: "发布时间",
+            value: articleInfo.publishTime,
+          },
+          {
+            icon: <TextSnippetIcon fontSize="inherit" />,
+            title: "文章字数",
+            value: articleInfo.count,
+          },
+          {
+            icon: <HourglassBottomIcon fontSize="inherit" />,
+            title: "阅读时间",
+            value: "1min",
+          },
+        ]}
+      />
     </CardContainer>
   );
 });

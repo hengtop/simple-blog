@@ -9,7 +9,7 @@ export const columns: GridColDef[] = [
     headerName: "分类",
     flex: 1,
     valueGetter: (params: GridValueGetterParams) => {
-      return params.row.categoryIds.join(",");
+      return params.row.categoryIds?.join(",");
     },
   },
   {

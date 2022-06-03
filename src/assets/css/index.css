@@ -1,9 +1,9 @@
 html {
   font-size: 100%;
-}
-
-html body #root .App {
-  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, Helvetica, helvetica neue,
+    segoe ui, Roboto, Oxygen, Ubuntu, Cantarell, open sans, sans-serif;
+  line-height: 1.6em;
+  word-break: break-word;
 }
 
 /* 主要修改edit中的DateTimePicker组件宽度 */
@@ -33,7 +33,7 @@ html body #root .App {
   border-radius: 10px;
   border-color: transparent;
   width: 20px;
-  background-color: #fff;
+  background-color: transparent;
 }
 ::-webkit-scrollbar-track-piece {
   /*内层轨道，滚动条中间部分 */

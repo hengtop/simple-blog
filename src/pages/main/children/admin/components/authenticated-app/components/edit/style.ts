@@ -10,6 +10,7 @@ export const EditContainer = styled(Paper)`
 
 export const EditWrapper = styled.div`
   flex: 1;
+  color: inherit;
 `;
 
 export const SubmitContent = styled.div`

@@ -4,35 +4,35 @@ import AppBar from "@mui/material/AppBar";
 export const MainContainer = styled.div(
   ({ background }: { background: { default: string; paper: string } }) => ({
     width: "100%",
-    height: "100vh",
+    height: "auto",
     backgroundColor: background.default,
-    overflow: "auto",
-    backgroundImage:
-      "linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05))",
   }),
 );
 
 export const HeaderContainer = styled(AppBar)`
+  max-width: 786px;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
   flex-direction: row;
   justify-content: space-between;
   height: 4rem;
   box-sizing: border-box;
-  padding: 0 2.5rem;
   box-shadow: none;
-  background-image: linear-gradient(
-    rgba(255, 255, 255, 0.05),
-    rgba(255, 255, 255, 0.05)
-  );
+  background-image: unset;
+  @media (max-width: 786px) {
+    padding: 0 1rem;
+  }
 `;
 
 export const OutletContainer = styled.main`
   box-sizing: border-box;
-  height: calc(100vh - 4rem);
+  min-height: 100vh;
   max-width: 1368px;
-  margin: 4rem auto 0;
+  margin: 0 auto;
   padding: 2.5rem 1.75rem;
+  padding-top: 6rem;
 `;
 
 export const HeaderLeft = styled.div``;

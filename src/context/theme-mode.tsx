@@ -20,10 +20,20 @@ export const ToggleColorMode = ({ children }: { children: ReactNode }) => {
     () =>
       createTheme({
         palette: {
-          primary: {
-            main: "#8ACADA",
-          },
           mode,
+          primary: {
+            main: "#fff",
+            ...(mode === "dark" && { main: "#12121" }),
+          },
+          ...(mode === "dark" && {
+            background: {
+              default: "#1D1E20",
+              paper: "#1D1E20",
+            },
+            text: {
+              primary: "#DADADB",
+            },
+          }),
         },
       }),
     [mode],

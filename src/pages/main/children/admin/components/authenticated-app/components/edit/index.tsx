@@ -231,10 +231,10 @@ export default memo(function Index() {
                 key={item.id}
                 control={
                   <Checkbox
-                    defaultChecked={defaultCheckedCategoryList.includes(
+                    defaultChecked={defaultCheckedCategoryList?.includes(
                       item.id,
                     )}
-                    checked={checkedCategoryList.includes(item.id)}
+                    checked={checkedCategoryList?.includes(item.id)}
                     onChange={() => handleChangeCategoryCheckBox(item.id)}
                   />
                 }
